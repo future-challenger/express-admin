@@ -283,6 +283,10 @@ function initServer (args) {
     return app;
 }
 
+function initAPI(app) {
+    console.log('init api here');
+
+}
 
 // start only if this module is executed from the command line
 if (require.main === module) {
@@ -304,6 +308,7 @@ if (require.main === module) {
             initSettings(args);
             
             var app = initServer(args);
+            initAPI(app);
 
             app.listen(args.config.server.port, function () {
                 console.log('Express Admin listening on port'.grey, 
@@ -319,11 +324,16 @@ exports = module.exports = {
     initDatabase: initDatabase,
     initSettings: initSettings,
     initServer: initServer,
+    initAPI: initAPI,
     init: function (config, done) {
         this.initDatabase(config, function (err) {
             if (err) return done(err);
             this.initSettings(config);
-            return done(null, this.initServer(config));
+
+            var app = this.initServer(config);
+            this.initAPI(app);
+            //return done(null, this.initServer(config));
+            return done(null, app);
         }.bind(this));
     }
 }
